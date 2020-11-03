@@ -4,6 +4,7 @@ components/arduino/
 components/esp-face/
 components/esp32-camera/
 components/esp_littlefs/
+components/esp-rainmaker/
 esp-idf/
 out/
 build/

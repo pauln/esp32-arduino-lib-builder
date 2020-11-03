@@ -49,6 +49,7 @@ if [ $? -ne 0 ]; then exit 1; fi
 
 if [ ! -d "$AR_COMPS/esp-rainmaker" ]; then
     git clone $RMAKER_REPO_URL "$AR_COMPS/esp-rainmaker"
+    git -C "$AR_COMPS/esp-rainmaker" checkout f1b82c71c4536ab816d17df016d8afe106bd60e3
 fi
 if [ $? -ne 0 ]; then exit 1; fi
 
