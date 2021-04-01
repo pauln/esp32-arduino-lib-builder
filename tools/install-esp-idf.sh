@@ -97,6 +97,6 @@ if [ -x $idf_was_installed ]; then
 else
 	git -C $IDF_PATH submodule update --init --recursive
 	cd $IDF_PATH && python -m pip install -r requirements.txt && cd "$AR_ROOT"
-	$IDF_PATH/install.sh
-	. $IDF_PATH/export.sh
 fi
+$IDF_PATH/install.sh
+source $IDF_PATH/export.sh

@@ -80,7 +80,9 @@ for item in "${@:2:${#@}-5}"; do
 			DEFINES+="$item "
 		fi
 	elif [[ "$item" != "-Wall" && "$item" != "-Werror=all"  && "$item" != "-Wextra" ]]; then
-		C_FLAGS+="$item "
+		if [[ "${item:0:23}" != "-mfix-esp32-psram-cache" && "${item:0:18}" != "-fmacro-prefix-map" ]]; then
+			C_FLAGS+="$item "
+		fi
 	fi
 done
 
@@ -92,11 +94,13 @@ set -- $str
 for item in "${@:2:${#@}-5}"; do
 	prefix="${item:0:2}"
 	if [[ "$prefix" != "-I" && "$prefix" != "-D" && "$item" != "-Wall" && "$item" != "-Werror=all"  && "$item" != "-Wextra" ]]; then
-		AS_FLAGS+="$item "
-		if [[ $C_FLAGS == *"$item"* ]]; then
-			PIO_CC_FLAGS+="$item "
-		else
-			PIO_AS_FLAGS+="$item "
+		if [[ "${item:0:23}" != "-mfix-esp32-psram-cache" && "${item:0:18}" != "-fmacro-prefix-map" ]]; then
+			AS_FLAGS+="$item "
+			if [[ $C_FLAGS == *"$item"* ]]; then
+				PIO_CC_FLAGS+="$item "
+			else
+				PIO_AS_FLAGS+="$item "
+			fi
 		fi
 	fi
 done
@@ -109,9 +113,11 @@ set -- $str
 for item in "${@:2:${#@}-5}"; do
 	prefix="${item:0:2}"
 	if [[ "$prefix" != "-I" && "$prefix" != "-D" && "$item" != "-Wall" && "$item" != "-Werror=all"  && "$item" != "-Wextra" ]]; then
-		CPP_FLAGS+="$item "
-		if [[ $PIO_CC_FLAGS != *"$item"* ]]; then
-			PIO_CXX_FLAGS+="$item "
+		if [[ "${item:0:23}" != "-mfix-esp32-psram-cache" && "${item:0:18}" != "-fmacro-prefix-map" ]]; then
+			CPP_FLAGS+="$item "
+			if [[ $PIO_CC_FLAGS != *"$item"* ]]; then
+				PIO_CXX_FLAGS+="$item "
+			fi
 		fi
 	fi
 done
@@ -127,8 +133,7 @@ done
 add_next=0
 is_dir=0
 is_script=0
-str=`cat build/build.ninja | grep LINK_LIBRARIES`
-str="${str:19}" #remove leading space
+str=`cat build/CMakeFiles/arduino-lib-builder.elf.dir/link.txt`
 set -- $str
 for item; do
 	prefix="${item:0:1}"
@@ -153,7 +158,11 @@ for item; do
 				if [[ $exclude_libs != *";$short_name;"* && $LD_LIBS_SEARCH != *"lib$short_name.a"* ]]; then
 					LD_LIBS_SEARCH+="lib$short_name.a "
 				fi
-			else
+			elif [ "$item" = "-o" ]; then
+				add_next=0
+				is_script=0
+				is_dir=0
+			elif [[ "${item:0:23}" != "-mfix-esp32-psram-cache" && "${item:0:18}" != "-fmacro-prefix-map" ]]; then
 				LD_FLAGS+="$item "
 				PIO_LD_FLAGS+="$item "
 			fi
@@ -258,7 +267,7 @@ set -- $PIO_LD_FUNCS
 for item; do
 	echo "        \"-u\", \"$item\"," >> "$AR_PLATFORMIO_PY"
 done
-echo "        \"-Wl,-Map=\" + join(\"\$BUILD_DIR\", basename(env.subst(\"\${PROJECT_DIR}.map\")))" >> "$AR_PLATFORMIO_PY"
+echo "        '-Wl,-Map=\"%s\"' % join(\"\$BUILD_DIR\", basename(env.subst(\"\${PROJECT_DIR}.map\")))" >> "$AR_PLATFORMIO_PY"
 
 echo "    ]," >> "$AR_PLATFORMIO_PY"
 echo "" >> "$AR_PLATFORMIO_PY"
@@ -274,11 +283,17 @@ for item; do
 		ipath="$item"
 		fname=`basename "$ipath"`
 		dname=`basename $(dirname "$ipath")`
+		if [[ "$fname" == "main" && "$dname" == "esp32-arduino-lib-builder" ]]; then
+			continue
+		fi
 		while [[ "$dname" != "components" && "$dname" != "build" ]]; do
 			ipath=`dirname "$ipath"`
 			fname=`basename "$ipath"`
 			dname=`basename $(dirname "$ipath")`
 		done
+		if [[ "$fname" == "arduino" ]]; then
+			continue
+		fi
 
 		out_sub="${item#*$ipath}"
 		out_cpath="$AR_SDK/include/$fname$out_sub"
@@ -378,7 +393,7 @@ echo "compiler.c.elf.libs.$IDF_TARGET=$AR_LIBS" >> "$AR_PLATFORM_TXT"
 echo "compiler.c.flags.$IDF_TARGET=$C_FLAGS -MMD -c" >> "$AR_PLATFORM_TXT"
 echo "compiler.cpp.flags.$IDF_TARGET=$CPP_FLAGS -MMD -c" >> "$AR_PLATFORM_TXT"
 echo "compiler.S.flags.$IDF_TARGET=$AS_FLAGS -x assembler-with-cpp -MMD -c" >> "$AR_PLATFORM_TXT"
-echo "compiler.c.elf.flags.$IDF_TARGET=-mlongcalls $LD_SCRIPTS $LD_FLAGS" >> "$AR_PLATFORM_TXT"
+echo "compiler.c.elf.flags.$IDF_TARGET=$LD_SCRIPTS $LD_FLAGS" >> "$AR_PLATFORM_TXT"
 cat 1platform_mid.txt >> "$AR_PLATFORM_TXT"
 rm -rf platform_start.txt platform_mid.txt 1platform_mid.txt
 

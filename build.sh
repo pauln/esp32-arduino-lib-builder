@@ -31,7 +31,7 @@ for target in $TARGETS; do
 	rm -rf build sdkconfig sdkconfig.old
 	cp "sdkconfig.$target" sdkconfig
 	# build and prepare libs
-	idf.py idf-libs
+	idf.py build
 	if [ $? -ne 0 ]; then exit 1; fi
 	cp sdkconfig "sdkconfig.$target"
 	# build bootloaders

@@ -3,7 +3,7 @@
 IDF_COMPS="$IDF_PATH/components"
 
 if [ -z $IDF_BRANCH ]; then
-	IDF_BRANCH="release/v4.2"
+	IDF_BRANCH="master"
 fi
 
 if [ -z $IDF_TARGET ]; then

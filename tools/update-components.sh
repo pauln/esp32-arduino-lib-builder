@@ -6,6 +6,13 @@ source ./tools/config.sh
 # CLONE/UPDATE ARDUINO
 #
 
+if [ -z $AR_BRANCH ]; then
+	has_ar_branch=`git_branch_exists "$AR_COMPS/arduino" "idf-$IDF_BRANCH"`
+	if [ "$has_ar_branch" == "1" ]; then
+		export AR_BRANCH="idf-$IDF_BRANCH"
+	fi
+fi
+
 if [ ! -d "$AR_COMPS/arduino" ]; then
 	git clone $AR_REPO_URL "$AR_COMPS/arduino"
 	if [ "$AR_BRANCH" ]; then
