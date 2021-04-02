@@ -93,11 +93,11 @@ if [ $? -ne 0 ]; then exit 1; fi
 # CLONE/UPDATE TINYUSB
 #
 
-if [ ! -d "$AR_COMPS/tinyusb/tinyusb" ]; then
-	git clone $TINYUSB_REPO_URL "$AR_COMPS/tinyusb/tinyusb"
+if [ ! -d "$AR_COMPS/arduino_tinyusb/tinyusb" ]; then
+	git clone $TINYUSB_REPO_URL "$AR_COMPS/arduino_tinyusb/tinyusb"
 else
-	git -C "$AR_COMPS/tinyusb/tinyusb" fetch && \
-	git -C "$AR_COMPS/tinyusb/tinyusb" pull --ff-only
+	git -C "$AR_COMPS/arduino_tinyusb/tinyusb" fetch && \
+	git -C "$AR_COMPS/arduino_tinyusb/tinyusb" pull --ff-only
 fi
 if [ $? -ne 0 ]; then exit 1; fi
 
