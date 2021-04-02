@@ -26,13 +26,6 @@ AR_USER="espressif"
 AR_REPO="$AR_USER/arduino-esp32"
 
 AR_REPO_URL="https://github.com/$AR_REPO.git"
-IDF_REPO_URL="https://github.com/espressif/esp-idf.git"
-CAMERA_REPO_URL="https://github.com/espressif/esp32-camera.git"
-FACE_REPO_URL="https://github.com/espressif/esp-face.git"
-RMAKER_REPO_URL="https://github.com/espressif/esp-rainmaker.git"
-DSP_REPO_URL="https://github.com/espressif/esp-dsp.git"
-LITTLEFS_REPO_URL="https://github.com/joltwallet/esp_littlefs.git"
-
 if [ -n $GITHUB_TOKEN ]; then
 	AR_REPO_URL="https://$GITHUB_TOKEN@github.com/$AR_REPO.git"
 fi

@@ -11,6 +11,7 @@ fi
 # CLONE ESP-IDF
 #
 
+IDF_REPO_URL="https://github.com/espressif/esp-idf.git"
 if [ -z "$IDF_PATH" ]; then
 	echo "ESP-IDF is not installed! Installing local copy"
 	idf_was_installed="1"
