@@ -1,9 +1,10 @@
-name: ESP32 Arduino Libs CI
+name: ESP32-solo Arduino Libs CI
 
 on:
   push:
     branches:
     - esp32-solo
+    - esp32-solo-no-mac-crc
   pull_request:
 
 jobs:
