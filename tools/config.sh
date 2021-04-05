@@ -9,7 +9,7 @@ IDF_TOOLCHAIN_WIN32="https://dl.espressif.com/dl/xtensa-esp32-elf-win32-1.22.0-9
 IDF_TOOLCHAIN_MACOS="https://dl.espressif.com/dl/xtensa-esp32-elf-osx-1.22.0-96-g2852398-5.2.0.tar.gz"
 
 if [ -z $IDF_BRANCH ]; then
-	IDF_BRANCH="release/v3.3"
+	IDF_BRANCH="release/v3.3-no-mac-crc"
 fi
 
 # Owner of the target ESP32 Arduino repository
@@ -18,7 +18,7 @@ AR_USER="espressif"
 # The full name of the repository
 AR_REPO="$AR_USER/arduino-esp32"
 
-IDF_REPO_URL="https://github.com/espressif/esp-idf.git"
+IDF_REPO_URL="https://github.com/pauln/esp-idf.git"
 CAMERA_REPO_URL="https://github.com/espressif/esp32-camera.git"
 FACE_REPO_URL="https://github.com/espressif/esp-face.git"
 AR_REPO_URL="https://github.com/$AR_REPO.git"
